@@ -1,14 +1,18 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 namespace Dots.Systems
 {
     [BurstCompile]
-    public partial struct CubeSpawnerSystem : ISystem
+    public partial class CubeSpawnerSystem : SystemBase
     {
-        public void OnUpdate(ref SystemState state)
+        private InputComponent _inputComponent;
+        protected override void OnUpdate()
         {
             if (!SystemAPI.TryGetSingletonEntity<CubesSpawnerComponent>(out var spawnerEntity))
             {
@@ -16,6 +20,17 @@ namespace Dots.Systems
             }
 
             var spawner = SystemAPI.GetComponentRW<CubesSpawnerComponent>(spawnerEntity);
+            
+            if (SystemAPI.TryGetSingleton(out _inputComponent))
+            {
+                if(_inputComponent.PressingLMB)
+                {
+                    Debug.Log(_inputComponent.InputValue);
+                    var entity = EntityManager.Instantiate(spawner.ValueRO.Prefab);
+                    EntityManager.SetComponentData(entity, LocalTransform.FromPosition(_inputComponent.InputValue));
+                }
+            }
+            
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
             if (spawner.ValueRO.NextSpawnTime < SystemAPI.Time.ElapsedTime)
@@ -31,9 +46,8 @@ namespace Dots.Systems
                         MoveSpeed = 10
                     });
                 
-                
                 spawner.ValueRW.NextSpawnTime = (float)SystemAPI.Time.ElapsedTime + spawner.ValueRO.SpawnRate;
-                ecb.Playback(state.EntityManager);
+                ecb.Playback(EntityManager);
             }
         }
     }

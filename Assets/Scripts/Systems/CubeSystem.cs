@@ -14,6 +14,7 @@ namespace Dots.Systems
 
             foreach (var entity in entities)
             {
+                continue;
                 if (entityManager.HasComponent<CubeComponent>(entity))
                 {
                     var cube = entityManager.GetComponentData<CubeComponent>(entity);
