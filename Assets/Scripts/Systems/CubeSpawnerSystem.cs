@@ -1,9 +1,7 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 namespace Dots.Systems
@@ -25,7 +23,6 @@ namespace Dots.Systems
             {
                 if(_inputComponent.PressingLMB)
                 {
-                    Debug.Log(_inputComponent.InputValue);
                     var entity = EntityManager.Instantiate(spawner.ValueRO.Prefab);
                     EntityManager.SetComponentData(entity, LocalTransform.FromPosition(_inputComponent.InputValue));
                 }

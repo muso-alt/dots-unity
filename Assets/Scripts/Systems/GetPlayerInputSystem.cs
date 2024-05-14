@@ -4,17 +4,13 @@ using UnityEngine;
 
 namespace Dots.Systems
 {
-    //[UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
     public partial class GetPlayerInputSystem : SystemBase
     {
         private Controls _controls;
-        private Camera _camera;
         private float _nextSpawnTime;
 
         protected override void OnCreate()
         {
-            _camera = Camera.main;
-            
             if (!SystemAPI.TryGetSingleton(out InputComponent cmp))
             {
                 EntityManager.CreateEntity(typeof(InputComponent));
